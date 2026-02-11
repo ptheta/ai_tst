@@ -10,13 +10,13 @@ DISCOVERY_PORT = 5555
 DISCOVERY_BROADCAST = "255.255.255.255"
 
 
-def _announce_process(host: str, port: int):
+def _announce_process(host: str, port: int, status: str = "online"):
     """Announce server IP every 5 seconds."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-    message = json.dumps({"host": host, "port": port}).encode()
+    message = json.dumps({"host": host, "port": port, "status": status}).encode()
 
     try:
         while True:
@@ -34,9 +34,10 @@ def _announce_process(host: str, port: int):
 class ServiceAnnouncer:
     """Announces server IP on the local network via UDP broadcast."""
 
-    def __init__(self, host: str, port: int):
+    def __init__(self, host: str, port: int, status: str = "online"):
         self.host = host
         self.port = port
+        self.status = status
         self._process: Optional[multiprocessing.Process] = None
 
     def start(self):
@@ -46,7 +47,7 @@ class ServiceAnnouncer:
         
         self._process = multiprocessing.Process(
             target=_announce_process,
-            args=(self.host, self.port),
+            args=(self.host, self.port, self.status),
             daemon=True
         )
         self._process.start()

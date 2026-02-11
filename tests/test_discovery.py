@@ -35,7 +35,7 @@ class TestDiscovery(unittest.TestCase):
 
     def test_discover_server_function(self):
         """Test discover_server convenience function."""
-        announcer = ServiceAnnouncer("192.168.1.100", 8000)
+        announcer = ServiceAnnouncer("127.0.0.1", 8000)
         announcer.start()
         time.sleep(0.2)
         
@@ -43,7 +43,7 @@ class TestDiscovery(unittest.TestCase):
         announcer.stop()
         
         self.assertIsNotNone(result)
-        self.assertEqual(result["host"], "192.168.1.100")
+        self.assertEqual(result["host"], "127.0.0.1")
 
 
 if __name__ == "__main__":
